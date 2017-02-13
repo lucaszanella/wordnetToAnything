@@ -41,7 +41,7 @@ def removeWhitespaceAtEnd(line):
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc2
 class Index(object):
     @staticmethod
-    def toJson(line):
+    def parse(line):
         tokens = removeWhitespaceAtEnd(line).split(' ')
         lemma = tokens[0]
         pos = tokens[1]
@@ -65,12 +65,22 @@ class Index(object):
             'tagsense_cnt': tagsense_cnt,
             'synset_offsets': synset_offsets
         }
+    @staticmethod
+    def toJson(line):
+        return json.dumps(line)
 
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc3
 class Data(object):
+    @staticmethod 
+    def getGloss(line):
+        return line.split(' | ')[1]
+    @staticmethod 
+    def removeGloss(line):
+        return line.split(' | ')[0]
     @staticmethod
-    def toJson(line):
-        tokens = removeWhitespaceAtEnd(line).split(' ')
+    def parse(line):
+        gloss = Data.getGloss(line)
+        tokens = Data.removeGloss(removeWhitespaceAtEnd(line)).split(' ')
         synset_offset = tokens[0]
         lex_filenum = tokens[1]
         ss_type = tokens[2]
@@ -84,6 +94,14 @@ class Data(object):
         #find the list [pointer1, pointer2, ...] where each pointer object is composed
         #of [pointer_symbol, synset_offset, pos, source_target]
         pointers = tokens[p_cnt_index+1:p_cnt_index+1+int(p_cnt)*4]
+        #For all data.something we should have a pipe | now, but data.verb is an exception,
+        #it has more data called frames
+        possiblePipeIndex = int(p_cnt_index)+int(p_cnt)*4+1
+        possiblePipe = tokens[possiblePipeIndex]
+        frames = []
+        if not possiblePipe=='|':
+            frame_counter = int(possiblePipe) #If it's not a pipe, it's a frame_counter
+            frames = tokens[possiblePipeIndex+1:possiblePipeIndex+1+frame_counter*2]
         pointers = [
             {
                 'pointer_symbol': pointers[0+n*4],
@@ -100,8 +118,13 @@ class Data(object):
             'w_cnt': w_cnt,
             'words': words,
             'p_cnt': p_cnt,
-            'pointers': pointers
+            'pointers': pointers,
+            'frames': frames,
+            'gloss': gloss
         }
+    @staticmethod
+    def toJson(line):
+        return json.dumps(line)
 
 with open('data.verb') as fp:
     for line in fp:
@@ -109,7 +132,7 @@ with open('data.verb') as fp:
             line = cleanLine(line)
             print('#################')
             print(line)
-            print (Data.toJson(line))
+            print ((Data.parse(line)))
 
 
 
