@@ -3,6 +3,7 @@ Parses the files and sends them to MongoDb
 
 Lucas Zanella, 13/02/2017
 '''
+import json
 
 c = 0
 max = 50
@@ -18,9 +19,6 @@ def isComment(line):
         return True
     else:
         return False
-
-def putApostrophe(string):
-    return '"'+string+'"'
 
 #Some tokens are arrays
 def isArray(token):
@@ -40,18 +38,6 @@ def removeWhitespaceAtEnd(line):
             break
     return cleanerLine
 
-def listToJsonArray(items):
-    jsonArray = '['
-    comma = ''
-    for index, item in enumerate(items): #https://stackoverflow.com/questions/522563/accessing-the-index-in-python-for-loops
-        if not index==0:
-            comma = ','
-        if not type(item) is list:
-            jsonArray += comma + putApostrophe(item)
-        else:
-            jsonArray += comma + listToJsonArray(item)
-    return jsonArray + ']'
-
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc2
 class Index(object):
     @staticmethod
@@ -62,25 +48,23 @@ class Index(object):
         synset_cnt = tokens[2]
         p_cnt = tokens[3]
         ptr_symbols = ''
-        synset_offset = ''
+        synset_offsets = ''
         if int(p_cnt) > 0:
             ptr_symbols = tokens[4:4+int(p_cnt)]
         sense_cnt = tokens[4+int(p_cnt)]
         tagsense_cnt = tokens[5+int(p_cnt)]
         synset_offset_start = 6 + int(p_cnt)
         if int(synset_cnt) > 0:
-            synset_offset = tokens[synset_offset_start:synset_offset_start+int(synset_cnt)]
-
-        json = '{' + putApostrophe('lemma') + ":" + putApostrophe(lemma) + ',' + \
-                putApostrophe('pos') + ":" + putApostrophe(pos) + ',' + \
-                putApostrophe('synset_cnt') + ":" + putApostrophe(synset_cnt) + ',' + \
-                putApostrophe('p_cnt') + ":" + putApostrophe(p_cnt) + ',' + \
-                putApostrophe('pointers') + ":" + listToJsonArray(ptr_symbols) + ',' + \
-                putApostrophe('sense_cnt') + ":" + putApostrophe(sense_cnt) + ',' + \
-                putApostrophe('tagsense_cnt') + ":" + putApostrophe(tagsense_cnt) + ',' + \
-                putApostrophe('synset_offsets') + ":" + listToJsonArray(synset_offset) + \
-                '}'
-        return json
+            synset_offsets = tokens[synset_offset_start:synset_offset_start+int(synset_cnt)]
+        return {
+            'lemma': lemma,
+            'synset_cnt': synset_cnt,
+            'p_cnt': p_cnt,
+            'pointers': ptr_symbols,
+            'sense_cnt': sense_cnt,
+            'tagsense_cnt': tagsense_cnt,
+            'synset_offsets': synset_offsets
+        }
 
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc3
 class Data(object):
@@ -94,19 +78,30 @@ class Data(object):
         #find the list [word1, lex_id1, word2, lex_id2, ...]
         words = tokens[4:4+2*int(w_cnt)]
         #returns tuple [word, lex_id] from the list [word1, lex_id1, word2, lex_id2, ...]
-        words = [[words[0+n*2], words[1+n*2]] for n in range(int(len(words)/2))]
+        words = [{'word': words[0+n*2], 'lex_id': words[1+n*2]} for n in range(int(len(words)/2))]
         p_cnt_index = 4+int(w_cnt)*2
         p_cnt = tokens[p_cnt_index]
-        pointers = tokens[p_cnt_index+1:p_cnt_index+1+int(p_cnt)]
-        json = '{' + putApostrophe('synset_offset') + ":" + putApostrophe(synset_offset) + ',' + \
-                putApostrophe('lex_filenum') + ":" + putApostrophe(lex_filenum) + ',' + \
-                putApostrophe('ss_type') + ":" + putApostrophe(ss_type) + ',' + \
-                putApostrophe('w_cnt') + ":" + putApostrophe(w_cnt) + ',' + \
-                putApostrophe('words') + ":" + listToJsonArray(words) + ',' + \
-                putApostrophe('p_cnt') + ":" + putApostrophe(p_cnt) + ',' + \
-                putApostrophe('pointers') + ":" + listToJsonArray(pointers) + ',' + \
-                '}'
-        return json
+        #find the list [pointer1, pointer2, ...] where each pointer object is composed
+        #of [pointer_symbol, synset_offset, pos, source_target]
+        pointers = tokens[p_cnt_index+1:p_cnt_index+1+int(p_cnt)*4]
+        pointers = [
+            {
+                'pointer_symbol': pointers[0+n*4],
+                'synset_offset': pointers[1+n*4],
+                'pos': pointers[2+n*4],
+                'source_target': pointers[3+n*4]
+            }
+            for n in range(int(len(pointers)/4))
+        ]
+        return {
+            'synset_offset': synset_offset,
+            'lex_filenum': lex_filenum,
+            'ss_type': ss_type,
+            'w_cnt': w_cnt,
+            'words': words,
+            'p_cnt': p_cnt,
+            'pointers': pointers
+        }
 
 with open('data.verb') as fp:
     for line in fp:
@@ -114,7 +109,6 @@ with open('data.verb') as fp:
             line = cleanLine(line)
             print('#################')
             print(line)
-            print('-------------')
             print (Data.toJson(line))
 
 
