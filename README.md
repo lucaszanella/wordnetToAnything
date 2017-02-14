@@ -11,7 +11,9 @@ in json files and parse them with your language's json parser (maybe I'll create
 
 Just
 `git clone https://github.com/lucaszanella/wordnetToAnything`
+
 `cd wordnetToAnything`
+
 `python3 toMongo.py`
 
 to see what it can do.
