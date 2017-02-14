@@ -8,6 +8,26 @@ import json
 c = 0
 max = 50
 
+indexFiles = [
+    'index.noun', 'index.verb', 'index.adj', 'index.adv'
+]
+
+dataFiles = [
+    'data.noun', 'data.verb', 'data.adj', 'data.adv'
+]
+
+exceptionFiles = [
+    'adj.exc', 'adv.exc', 'cousin.exc', 'noun.exc'
+]
+
+verbFiles = [
+    'sentidx.vrb', 'sents.vrb'
+]
+
+otherFiles = [
+    'cntlist', 'verb.Framestext', 'cntlist.rev'
+]
+
 #Strips the new line character
 def cleanLine(line):
     line = line.strip('\n')
@@ -130,21 +150,22 @@ class Data(object):
     def toJson(line):
         return json.dumps(line)
 
-with open('data.verb') as fp:
-    for line in fp:
-        if not isComment(line):
-            line = cleanLine(line)
-            print('#################')
-            print(line)
-            print ((Data.parse(line)))
 
+def forEachLineOfFileDo(fileName, do):
+    if fileName in indexFiles:
+        pass
+    if fileName in dataFiles:
+        c = 0
+        with open(fileName) as fp:
+            for line in fp:
+                if not isComment(line):
+                    line = cleanLine(line)
+                    do ((Data.parse(line)))
+                c += 1
+                if c > max:
+                   break
 
-
-        c += 1
-        if c > max:
-            break
-            #pass
-
+forEachLineOfFileDo('data.verb', print)
 
 with open('index.verb') as fp:
     for line in fp:
