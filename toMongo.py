@@ -5,7 +5,13 @@ client = MongoClient()
 databaseName = 'wordnet'
 
 def toMongo(line, args):
-    #print('must insert line ' + str(line) + ' to database ' + replacePointWithUnderscore(args[0]))
+    fileName = args[0]
+    #We pop the counters as we don't need them in json
+    if 'index' in fileName: #if it's an index file
+        line.pop('p_cnt', None)
+        line.pop('synset_cnt', None)
+        line.pop('sense_cnt', None)
+        line.pop('tagsense_cnt', None)
     client[databaseName][replacePointWithUnderscore(args[0])].insert_one(line)
 
 def replacePointWithUnderscore(string):
