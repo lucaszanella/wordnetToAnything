@@ -150,18 +150,23 @@ class Data(object):
     def toJson(line):
         return json.dumps(line)
 
+class CallbackWrapper(object):
+    def __init__(self, callback, *args):
+        self.callback = callback
+        self.args = args
+    def execute(self, line):
+        self.callback(line, self.args)
 
+        
 def forEachLineOfFileDo(fileName, do):
     c = 0
     with open(fileName) as fp:
         for line in fp:
             if not isComment(line):
                 line = cleanLine(line)
-                if fileName in indexFiles: do (Index.parse(line))
-                if fileName in dataFiles: do (Data.parse(line))
+                if fileName in indexFiles: do.execute(Index.parse(line))
+                if fileName in dataFiles: do.execute(Data.parse(line))
             c += 1
             if c > max:
                 break
 
-#forEachLineOfFileDo('data.verb', print)
-forEachLineOfFileDo('index.verb', print)
