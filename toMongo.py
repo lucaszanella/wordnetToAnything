@@ -1,3 +1,9 @@
+'''
+For each line of parsed WordNet files, send it to MongoDB
+
+Lucas Zanella, 13/02/2017
+'''
+
 import wordnetToAnything as WN
 from pymongo import MongoClient
 
@@ -17,6 +23,8 @@ def toMongo(line, args):
 def replacePointWithUnderscore(string):
     return string.replace('.','_')
 
+
+print('working...\n')
 #erases collection in case you have written something there before
 fileName = 'index.verb'
 client[databaseName].drop_collection(replacePointWithUnderscore(fileName))

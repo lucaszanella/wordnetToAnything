@@ -1,5 +1,5 @@
 '''
-Parses the files and sends them to MongoDb
+Parses the WordNet files and returns a dictionary of tokens for each line
 
 Lucas Zanella, 13/02/2017
 '''
