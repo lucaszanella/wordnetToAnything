@@ -1,10 +1,10 @@
 # WordNet To Anything
 This is mainly a python3 script to help you port Wordnet data structures to another language, database, or anything you might be intersted.
 
-You can, for example, insert everything into MondoDB, but since RAM today is big, you can fit the entire WordNet into it, which will lead to 
+You can, for example, insert everything into MongoDB, but since RAM today is big, you can fit the entire WordNet into it, which will lead to 
 faster searching (you'll, though, have to implement your own searching algorithm in some languages). Remember that you don't have to rewrite
-this parser to other languages in order to have the WordNet accessible through RAM into your prefered language, you just have to save the WordNet
-in json files and parse them with your language's json parser :)
+this parser to other languages in order to have the WordNet accessible through RAM into your prefered one, you just have to save the WordNet
+in json files and parse them with your language's json parser (maybe I'll create a .json version of WordNet and link it here).
 
 # How WordNet works
 You might be intersted in a better explanation of the WordNet data files than the one shown in the documentation. It was a little hard for me to 
