@@ -28,6 +28,7 @@ def justPrint(line, args):
     print(line)
 
 print('working...\n')
+#Takes care of index files
 '''
 #erases collection in case you have written something there before
 fileName = 'index.verb'
@@ -35,6 +36,9 @@ collectionName = replacePointWithUnderscore(fileName)
 client[databaseName].drop_collection(collectionName)
 WN.forEachLineOfFileDo(fileName, WN.CallbackWrapper(toMongo, fileName, collectionName))
 '''
+#Takes care of data files
+
+#Takes care of MultiLingual files
 language = 'pt'
 fileName = 'wn-data-por.tab'
 collectionName = language + '_' + replacePointWithUnderscore(fileName)

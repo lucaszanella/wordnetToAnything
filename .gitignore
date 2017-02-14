@@ -10,3 +10,6 @@ log.*
 verb.*
 __pycache__/
 dbfiles/
+por/
+por.zip
+wn-data-por.tab
