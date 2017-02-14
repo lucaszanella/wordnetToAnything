@@ -9,7 +9,7 @@ in json files and parse them with your language's json parser (maybe I'll create
 
 #How to use it
 
-Just
+Just make sure that you have pymongo (optional but you might wanna use it): `pip3 install pymongo`
 
 `git clone https://github.com/lucaszanella/wordnetToAnything`
 
