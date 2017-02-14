@@ -152,30 +152,16 @@ class Data(object):
 
 
 def forEachLineOfFileDo(fileName, do):
-    if fileName in indexFiles:
-        pass
-    if fileName in dataFiles:
-        c = 0
-        with open(fileName) as fp:
-            for line in fp:
-                if not isComment(line):
-                    line = cleanLine(line)
-                    do ((Data.parse(line)))
-                c += 1
-                if c > max:
-                   break
+    c = 0
+    with open(fileName) as fp:
+        for line in fp:
+            if not isComment(line):
+                line = cleanLine(line)
+                if fileName in indexFiles: do (Index.parse(line))
+                if fileName in dataFiles: do (Data.parse(line))
+            c += 1
+            if c > max:
+                break
 
-forEachLineOfFileDo('data.verb', print)
-
-with open('index.verb') as fp:
-    for line in fp:
-        if not isComment(line):
-            line = cleanLine(line)
-            #print (Index.toJson(line))
-
-
-
-        c += 1
-        if c > max:
-            break
-            #pass
+#forEachLineOfFileDo('data.verb', print)
+forEachLineOfFileDo('index.verb', print)
