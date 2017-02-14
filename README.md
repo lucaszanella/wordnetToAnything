@@ -10,6 +10,7 @@ in json files and parse them with your language's json parser (maybe I'll create
 #How to use it
 
 Just
+
 `git clone https://github.com/lucaszanella/wordnetToAnything`
 
 `cd wordnetToAnything`
