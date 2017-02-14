@@ -1,9 +1,16 @@
 # WordNet To Anything
 This is mainly a python3 script to help you port Wordnet data structures to another language, database, or anything you might be intersted.
 
+You can, for example, insert everything into MondoDB, but since RAM today is big, you can fit the entire WordNet into it, which will lead to 
+faster searching (you'll, though, have to implement your own searching algorithm in some languages). Remember that you don't have to rewrite
+this parser to other languages in order to have the WordNet accessible through RAM into your prefered language, you just have to save the WordNet
+in json files and parse them with your language's json parser :)
+
 # How WordNet works
-You might be intersted in a better explanation of the WordNet data files than the one shown in the documentation.
-Here's a better written introduction from this discussion https://stackoverflow.com/questions/42216995/what-exactly-are-wordnet-lexicographer-files-understanding-how-wordnet-works I had on stackoverflow:
+You might be intersted in a better explanation of the WordNet data files than the one shown in the documentation. It was a little hard for me to 
+understand how the WordNet works just by looking into the official documentation, so I hope this article serves you well.
+
+The article below is a better written version from [this discussion][3] I had on stackoverflow:
 
 I'm trying to understand the file formats of the WordNet, and the main documents are [WNDB][1] and [WNINPUT][2]. As I understood in WNDB, there are the files called `index.something` and `data.something`, where this `something` can be `noun, adv, vrb, adj`.
 
@@ -51,7 +58,7 @@ synset_offset we already know,
 
   [1]: https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html
   [2]: https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html
-
+  [3]: https://stackoverflow.com/questions/42216995/what-exactly-are-wordnet-lexicographer-files-understanding-how-wordnet-works
     p_cnt: counts the number of pointers, which in our case is `023`, so we have 23 pointers, wow
 
 After `p_cnt`, then comes the pointers, each one in the format:
