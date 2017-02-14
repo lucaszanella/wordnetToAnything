@@ -101,7 +101,11 @@ class Data(object):
         frames = []
         if not possiblePipe=='|':
             frame_counter = int(possiblePipe) #If it's not a pipe, it's a frame_counter
-            frames = tokens[possiblePipeIndex+1:possiblePipeIndex+1+frame_counter*2]
+            frames = tokens[possiblePipeIndex+1:possiblePipeIndex+1+frame_counter*3]
+            frames = [x for x in frames if x != "+"] #removes the preceding '+' symbol in each new frame
+            #groups each frame in a list [f_num, w_num]
+            frames = [{'f_num': frames[0+n*2], 'w_num': frames[1+n*2]} for n in range(int(len(frames)/2))]
+
         pointers = [
             {
                 'pointer_symbol': pointers[0+n*4],
@@ -118,8 +122,8 @@ class Data(object):
             'w_cnt': w_cnt,
             'words': words,
             'p_cnt': p_cnt,
-            'pointers': pointers,
-            'frames': frames,
+            'ptrs': pointers,
+            'frms': frames,
             'gloss': gloss
         }
     @staticmethod
