@@ -2,4 +2,11 @@
 *.verb
 *.adj
 *.adv
+*.exc
+cntlist
+cntlist.rev
+log.*
+*.vrb
+verb.*
+__pycache__/
 dbfiles/
