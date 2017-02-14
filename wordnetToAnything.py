@@ -28,6 +28,10 @@ otherFiles = [
     'cntlist', 'verb.Framestext', 'cntlist.rev'
 ]
 
+multilingualFiles = [
+    'wn-data-por.tab'
+]
+
 #Strips the new line character
 def cleanLine(line):
     line = line.strip('\n')
@@ -35,7 +39,7 @@ def cleanLine(line):
 
 #Checks if line is WordNet comment
 def isComment(line):
-    if line[0] == ' ': #Comments start with empty space
+    if line[0] == ' ' or line[0] == '#': #Comments start with empty space
         return True
     else:
         return False
@@ -85,9 +89,6 @@ class Index(object):
             'tagsense_cnt': tagsense_cnt,
             'synset_offsets': synset_offsets
         }
-    @staticmethod
-    def toJson(line):
-        return json.dumps(line)
 
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc3
 class Data(object):
@@ -146,9 +147,24 @@ class Data(object):
             'frms': frames,
             'gloss': gloss
         }
+
+#http://compling.hss.ntu.edu.sg/omw/
+class MultilingualIndex(object):
     @staticmethod
-    def toJson(line):
-        return json.dumps(line)
+    def parse(line):
+        tokens = line.split("\t")
+        synsetAndPos = tokens[0].split('-')
+        synset_offset = synsetAndPos[0]
+        pos = synsetAndPos[1]
+        typ = tokens[1]
+        word = tokens[2]
+        return {
+            'synset_offset': synset_offset,
+            'pos': pos,
+            'type': typ,
+            'word': word
+        }
+
 
 class CallbackWrapper(object):
     def __init__(self, callback, *args):
@@ -166,6 +182,7 @@ def forEachLineOfFileDo(fileName, do):
                 line = cleanLine(line)
                 if fileName in indexFiles: do.execute(Index.parse(line))
                 if fileName in dataFiles: do.execute(Data.parse(line))
+                if fileName in multilingualFiles: do.execute(MultilingualIndex.parse(line))
             c += 1
             if c > max:
                 break

@@ -12,20 +12,31 @@ databaseName = 'wordnet'
 
 def toMongo(line, args):
     fileName = args[0]
+    collectionName = args[1]
     #We pop the counters as we don't need them in json
     if 'index' in fileName: #if it's an index file
         line.pop('p_cnt', None)
         line.pop('synset_cnt', None)
         line.pop('sense_cnt', None)
         line.pop('tagsense_cnt', None)
-    client[databaseName][replacePointWithUnderscore(args[0])].insert_one(line)
+    client[databaseName][collectionName].insert_one(line)
 
 def replacePointWithUnderscore(string):
     return string.replace('.','_')
 
+def justPrint(line, args):
+    print(line)
 
 print('working...\n')
+'''
 #erases collection in case you have written something there before
 fileName = 'index.verb'
-client[databaseName].drop_collection(replacePointWithUnderscore(fileName))
-WN.forEachLineOfFileDo(fileName, WN.CallbackWrapper(toMongo, fileName))
+collectionName = replacePointWithUnderscore(fileName)
+client[databaseName].drop_collection(collectionName)
+WN.forEachLineOfFileDo(fileName, WN.CallbackWrapper(toMongo, fileName, collectionName))
+'''
+language = 'pt'
+fileName = 'wn-data-por.tab'
+collectionName = language + '_' + replacePointWithUnderscore(fileName)
+client[databaseName].drop_collection(collectionName)
+WN.forEachLineOfFileDo(fileName, WN.CallbackWrapper(toMongo, fileName, collectionName))
