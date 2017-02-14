@@ -1,20 +1,58 @@
 # WordNet To Anything
-This is mainly a python3 script to help you port Wordnet data structures to another language, database, or anything you might be intersted.
+This is mainly a python3 script to help you port Wordnet data structures to another language, database, or anything you might be intersted. It reads each line of the wordnet text files and returns a python dictionary containing the tokens; then you can do whatever you want with this dictionary. The `toMongo.py` script, for example, takes each dictionary and inserts as a document in a MongoDB database (of course it separates each text file in its own collection).
 
-You can, for example, insert everything into MongoDB, but since RAM today is big, you can fit the entire WordNet into it, which will lead to 
+
+You can insert everything into MongoDB, but since RAM today is big, you can fit the entire WordNet into it, which will lead to 
 faster searching (you'll, though, have to implement your own searching algorithm in some languages). Remember that you don't have to rewrite
 this parser to other languages in order to have the WordNet accessible through RAM into your prefered one, you just have to save the WordNet
 in json files and parse them with your language's json parser (maybe I'll create a .json version of WordNet and link it here).
+
+#How to use it
+
+Just
+
+`git clone https://github.com/lucaszanella/wordnetToAnything`
+
+`cd wordnetToAnything`
+
+`python3 toMongo.py`
+
+to see what it can do.
 
 # How WordNet works
 You might be intersted in a better explanation of the WordNet data files than the one shown in the documentation. It was a little hard for me to 
 understand how the WordNet works just by looking into the official documentation, so I hope this article serves you well.
 
+[This][4] is where you can download the WordNet. However, it comes with programs to read the data. We just want the data, as we're gonna building programs on top of it, or just intersted in converting it to another language. So you should download from the part that says "WordNet 3.1 DATABASE FILES ONLY". You'll get the following files:
+
+├── adj.exc
+├── adv.exc
+├── cntlist
+├── cntlist.rev
+├── cousin.exc
+├── data.adj
+├── data.adv
+├── data.noun
+├── data.verb
+├── dbfiles
+├── index.adj
+├── index.adv
+├── index.noun
+├── index.sense
+├── index.verb
+├── log.grind.3.1
+├── noun.exc
+├── sentidx.vrb
+├── sents.vrb
+├── verb.exc
+└── verb.Framestext
+
+The ones that really matter are `index.something` and `data.something`, where this `something` can be `adv`, `noun`, `verbe`, `adj`
+
+
 The article below is a better written version from [this discussion][3] I had on stackoverflow:
 
-I'm trying to understand the file formats of the WordNet, and the main documents are [WNDB][1] and [WNINPUT][2]. As I understood in WNDB, there are the files called `index.something` and `data.something`, where this `something` can be `noun, adv, vrb, adj`.
-
-So, if I want to know something about the word `dog` as a `noun`, I'd look into the `index.noun`, search for the word `dog`, which gives me the line:
+So, if we want to know something about the word `dog` as a `noun`, we must look into the `index.noun` file and search for the word `dog`, which gives us the line:
 
     dog n 7 5 @ ~ #m #p %p 7 1 02086723 10133978 10042764 09905672 07692347 03907626 02712903  
 
@@ -22,9 +60,9 @@ According to the WNDB documment, this line represents these data:
 
     lemma  pos  synset_cnt  p_cnt  [ptr_symbol...]  sense_cnt  tagsense_cnt   synset_offset  [synset_offset...] 
 
-Where `lemma` is the word, `pos` is the identifier that tells it's a noun, `synset_cnt` tells us in how many synsets this word is included, `p_cnt` tells us how many pointers to these synsets we have, `[ptr_symbol]` is an array of pointers, `sense_cnt` and `tagsense_cnt` I didn't understand and would like an explanation, and `synset_offset` is one or more synsets to be looked into the `data.noun` file
+Where `lemma` is the word, `pos` is the identifier that tells it's a noun, `synset_cnt` tells us in how many synsets this word is included, `p_cnt` tells us how many pointers to these synsets we have, `[ptr_symbol]` is an array of pointers, `sense_cnt` and `tagsense_cnt` are some data I havent figured out the purpose yet, and `synset_offset` is one or more synsets to be looked into the `data.noun` file
 
-Ok, so I know those pointers point to something, and here are their descriptions, as written in WNINPUT:
+Ok, so those pointers must point to something, and here are their descriptions (cutted only the ones that appear in dog), as written in WNINPUT:
 
     @    Hypernym 
      ~    Hyponym 
@@ -32,9 +70,7 @@ Ok, so I know those pointers point to something, and here are their descriptions
     #p    Part holonym 
     %p    Part meronym 
 
-I don't know how to find a Hypernym for this noun, but let's continue:
-
-The other important data are the `synset_offset`s, which are:
+The other important fields to be looked are `synset_offset`s, which in the dog case are:
 
     02086723 10133978 10042764 09905672 07692347 03907626 02712903  
 
@@ -48,7 +84,7 @@ As you can see, we've found the line that begins with `02086723`. The contents o
 
 synset_offset we already know, 
 
-**`lex_filenum` says in which of the lexicographers file is our word (this is the part that I don't understand the most)**, 
+`lex_filenum` says in which of the lexicographers file is our word (lexicographer files are not important for now), 
 
 `ss_type` is `n` which tells us that it's a noun, 
 
@@ -59,6 +95,7 @@ synset_offset we already know,
   [1]: https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html
   [2]: https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html
   [3]: https://stackoverflow.com/questions/42216995/what-exactly-are-wordnet-lexicographer-files-understanding-how-wordnet-works
+  [4]: https://wordnet.princeton.edu/wordnet/download/current-version/
     p_cnt: counts the number of pointers, which in our case is `023`, so we have 23 pointers, wow
 
 After `p_cnt`, then comes the pointers, each one in the format:
@@ -81,6 +118,4 @@ When I search for  in data.noun, I get
 
     02085998 05 n 02 canine 0 canid 0 011 @ 02077948 n 0000 #m 02085690 n 0000 + 02688440 a 0101 ~ 02086324 n 0000 ~ 02086723 n 0000 ~ 02116752 n 0000 ~ 02117748 n 0000 ~ 02117987 n 0000 ~ 02119787 n 0000 ~ 02120985 n 0000 %p 02442560 n 0000 | any of various fissiped mammals with nonretractile claws and typically long muzzles  
 
-which is an `Hypernym` of `dog`. So that's how you find relations betweet synsets. I guess the pointer symbols in the line for dog were just to inform which types of relations I could find for the word dog? Isn't it redundant? Because these pointer symbols are already in each of the `synset_offsets` as we seen. When we look at each `synset_offset` in `data.noun`, we can see those pointer symbols, so why they're necessary in the `index.noun` file?
-
-Also, see that I didn't use the lexicographers file at all. I know that in `data.noun`, specifically in the field `lex_filenum`, I can know where the data structure for `dog` is located, but **what is this structure for**? As you can see, I could find hypernym, and many other relations, just by looking at the `index` and `data` files, I didn't use any of the so called lexicographer files
+which is an `Hypernym` of `dog`. So that's how you find relations betweet synsets. 
