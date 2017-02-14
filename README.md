@@ -19,7 +19,7 @@ Just make sure that you have pymongo (optional but you might wanna use it): `pip
 
 to see what it can do.
 
-# How WordNet works
+# How WordNet works (internals, file formats, synset relations)
 You might be intersted in a better explanation of the WordNet data files than the one shown in the documentation. It was a little hard for me to 
 understand how the WordNet works just by looking into the official documentation, so I hope this article serves you well.
 
