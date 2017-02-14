@@ -5,7 +5,8 @@ client = MongoClient()
 databaseName = 'wordnet'
 
 def toMongo(line, args):
-    print('must insert line ' + str(line) + ' to database ' + replacePointWithUnderscore(args[0]))
+    #print('must insert line ' + str(line) + ' to database ' + replacePointWithUnderscore(args[0]))
+    client[databaseName][replacePointWithUnderscore(args[0])].insert_one(line)
 
 def replacePointWithUnderscore(string):
     return string.replace('.','_')
