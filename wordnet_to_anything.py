@@ -77,6 +77,7 @@ class Index(object):
             synset_offsets = tokens[synset_offset_start:synset_offset_start+int(synset_cnt)]
         return {
             'lemma': lemma,
+            'pos': pos,
             'synset_cnt': synset_cnt,
             'p_cnt': p_cnt,
             'pointers': ptr_symbols,
