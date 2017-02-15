@@ -48,7 +48,7 @@ print('working...\n')
 file_name = 'index.verb'
 collection_name = replace_point_with_underline(file_name)
 CLIENT[DATABASE_NAME].drop_collection(collection_name)
-WN.for_each_line_of_file_do(WORDNET_DIR + file_name,
+WN.for_each_line_of_file_do(WORDNET_DIR + '/' + file_name,
     WN.CallbackWrapper(to_mongo,
         original_file_name = file_name,
         collection_name = collection_name
