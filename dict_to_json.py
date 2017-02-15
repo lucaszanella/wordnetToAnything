@@ -45,8 +45,8 @@ def to_json(line, kwargs, kwargs_from_file_reading):
     file_object.write(comma + new_line + json.dumps(line))
 
 print('working...\n')
-#Takes care of index and data files
 
+#Takes care of index and data files
 for file_name in list(set(WN.META.index_files) | set(WN.META.data_files)):
     original_file_name = file_name
     new_file_name = original_file_name + '.json'
