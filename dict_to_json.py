@@ -19,6 +19,7 @@ reads the file line per line, kwargs are from file constructor
 kwargs_from_file_reading is mainly used to know in which line
 we are 
 '''
+
 def to_json(line, kwargs, kwargs_from_file_reading):
     """Inserts a new line into kwargs['file_object'] file object"""
     original_file_name = kwargs['original_file_name']
