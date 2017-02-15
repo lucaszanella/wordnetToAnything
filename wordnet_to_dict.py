@@ -42,17 +42,17 @@ class Index(object):
         tokens = remove_whitespace_at_end(line).split(' ')
         lemma = tokens[0]
         pos = tokens[1]
-        synset_cnt = tokens[2]
-        p_cnt = tokens[3]
+        synset_cnt = int(tokens[2])
+        p_cnt = int(tokens[3])
         ptr_symbols = ''
         synset_offsets = ''
-        if int(p_cnt) > 0:
-            ptr_symbols = tokens[4:4+int(p_cnt)]
-        sense_cnt = tokens[4+int(p_cnt)]
-        tagsense_cnt = tokens[5+int(p_cnt)]
-        synset_offset_start = 6 + int(p_cnt)
-        if int(synset_cnt) > 0:
-            synset_offsets = tokens[synset_offset_start:synset_offset_start+int(synset_cnt)]
+        if p_cnt > 0:
+            ptr_symbols = tokens[4:4+p_cnt]
+        sense_cnt = tokens[4+p_cnt]
+        tagsense_cnt = tokens[5+p_cnt]
+        synset_offset_start = 6 + p_cnt
+        if synset_cnt > 0:
+            synset_offsets = tokens[synset_offset_start:synset_offset_start + synset_cnt]
         return {
             'lemma': lemma,
             'pos': pos,
@@ -85,23 +85,25 @@ class Data(object):
         ss_type = tokens[2]
         w_cnt = tokens[3]
         #find the list [word1, lex_id1, word2, lex_id2, ...]
-        words = tokens[4:4+2*int(w_cnt)] #words come in pairs [word, lex_id], so we add 2*w_cnt
+        words = tokens[4:4+2*int(w_cnt, 16)] #words come in pairs [word, lex_id], so we add 2*w_cnt
         #returns tuple [word, lex_id] from the list [word1, lex_id1, word2, lex_id2, ...]
-        words = [{'word': words[0+n*2], 'lex_id': words[1+n*2]} for n in range(int(len(words)/2))]
-        p_cnt_index = 4+int(w_cnt)*2
+        words = [{'word': words[0+n*2], 'lex_id': int(words[1+n*2], 16)} for n in range(int(len(words)/2))]
+        p_cnt_index = 4+int(w_cnt, 16)*2
         p_cnt = tokens[p_cnt_index]
         #find the list [pointer1, pointer2, ...] where each pointer object is composed
         #of [pointer_symbol, synset_offset, pos, source_target]
         pointers = tokens[p_cnt_index+1:p_cnt_index+1+int(p_cnt)*4]
         #For all data.something we should have a pipe | now, but data.verb is an exception,
         #it has more data called frames
-        possible_pipe_index = int(p_cnt_index)+int(p_cnt)*4+1
+        possible_pipe_index = p_cnt_index +int(p_cnt)*4+1
         try:
             possible_pipe = tokens[possible_pipe_index]
-        except Exception:
+        except Exception as e:
+            print(str(e))
             print(line)
             print(tokens)
             print(possible_pipe_index)
+            print(len(tokens))
         frames = []
         if not possible_pipe == '|':
             frame_counter = int(possible_pipe) #If it's not a pipe, it's a frame_counter
@@ -180,5 +182,5 @@ def for_each_line_of_file_do(file_path, wrapped_callback):
                 first_line_never_reached = False
             c += 1
             if c > max:
-                break
+                pass
 
