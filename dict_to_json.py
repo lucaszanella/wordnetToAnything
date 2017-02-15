@@ -4,7 +4,7 @@ For each line of parsed WordNet files, save it as a new json element
 Lucas Zanella, 13/02/2017
 '''
 
-import wordnet_to_anything as WN
+import wordnet_to_dict as WN
 import json
 
 '''
