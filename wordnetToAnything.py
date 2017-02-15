@@ -167,11 +167,11 @@ class MultilingualIndex(object):
 
 
 class CallbackWrapper(object):
-    def __init__(self, callback, *args):
+    def __init__(self, callback, **kwargs):
         self.callback = callback
-        self.args = args
+        self.kwargs = kwargs
     def execute(self, line):
-        self.callback(line, self.args)
+        self.callback(line, self.kwargs)
 
         
 def forEachLineOfFileDo(fileName, do):

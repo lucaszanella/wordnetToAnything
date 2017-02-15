@@ -7,16 +7,16 @@ Lucas Zanella, 13/02/2017
 import wordnetToAnything as WN
 import json
 
-def toJson(line, args):
-    fileName = args[0]
-    fileObject = args[1]
+def toJson(line, kwargs):
+    originalFileName = kwargs['originalFileName']
+    fileObject = kwargs['fileObject']
     #We pop the counters as we don't need them in json
-    if 'index' in fileName: #if it's an index file
+    if 'index' in originalFileName: #if it's an index file
         line.pop('p_cnt', None)
         line.pop('synset_cnt', None)
         line.pop('sense_cnt', None)
         line.pop('tagsense_cnt', None)
-    if 'data' in fileName and 'wn-' not in fileName: #if it's a data file but not a wn-lang-data... file
+    if 'data' in originalFileName and 'wn-' not in originalFileName: #if it's a data file but not a wn-lang-data... file
         line.pop('w_cnt', None)
         line.pop('p_cnt', None)
         line.pop('sense_cnt', None)
@@ -37,7 +37,12 @@ originalFileName = 'index.verb'
 newFileName = originalFileName + '.json'
 with open(newFileName, 'w') as f:
     f.write('[')
-    WN.forEachLineOfFileDo(originalFileName, WN.CallbackWrapper(toJson, originalFileName, f))
+    WN.forEachLineOfFileDo(originalFileName, 
+        WN.CallbackWrapper(toJson, 
+            originalFileName = originalFileName, 
+            fileObject = f
+        )
+    )
     f.write(']')
 
 #Takes care of data files
