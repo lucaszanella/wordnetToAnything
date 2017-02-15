@@ -8,65 +8,60 @@ import json
 c = 0
 max = 50
 
-indexFiles = [
+index_files = [
     'index.noun', 'index.verb', 'index.adj', 'index.adv'
 ]
 
-dataFiles = [
+data_files = [
     'data.noun', 'data.verb', 'data.adj', 'data.adv'
 ]
 
-exceptionFiles = [
+exception_files = [
     'adj.exc', 'adv.exc', 'cousin.exc', 'noun.exc'
 ]
 
-verbFiles = [
+verb_files = [
     'sentidx.vrb', 'sents.vrb'
 ]
 
-otherFiles = [
+other_files = [
     'cntlist', 'verb.Framestext', 'cntlist.rev'
 ]
 
-multilingualFiles = [
+multilingual_files = [
     'wn-data-por.tab'
 ]
 
 #Strips the new line character
-def cleanLine(line):
+def clean_line(line):
     line = line.strip('\n')
     return line
 
 #Checks if line is WordNet comment
-def isComment(line):
+def is_comment(line):
     if line[0] == ' ' or line[0] == '#': #Comments start with empty space
         return True
     else:
         return False
 
-#Some tokens are arrays
-def isArray(token):
-    if token not in ['ptr_symbol', 'synset_offset']:
-        return False
-    else:
-        return True
-
-def removeWhitespaceAtEnd(line):
-    cleanerLine = line
+def remove_whitespace_at_end(line):
+    cleaner_line = line
     max = 5
     counter = 0
-    while cleanerLine[len(cleanerLine)-1] == ' ':
-        cleanerLine = cleanerLine[:-1]
+    while cleaner_line[len(cleaner_line)-1] == ' ':
+        cleaner_line = cleaner_line[:-1]
         counter += 1
         if counter >= max:
             break
-    return cleanerLine
+    return cleaner_line
 
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc2
 class Index(object):
+    """Container for static methods that deal with index.something files"""
     @staticmethod
     def parse(line):
-        tokens = removeWhitespaceAtEnd(line).split(' ')
+        """Parses the line by breaking into tokens and returns a dictionary"""
+        tokens = remove_whitespace_at_end(line).split(' ')
         lemma = tokens[0]
         pos = tokens[1]
         synset_cnt = tokens[2]
@@ -92,16 +87,20 @@ class Index(object):
 
 #https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc3
 class Data(object):
+    """Container for static methods that deal with data.something files"""
     @staticmethod 
-    def getGloss(line):
+    def get_gloss(line):
+        """Returns the gloss, which is the text after the pipe"""
         return line.split(' | ')[1]
     @staticmethod 
-    def removeGloss(line):
+    def remove_gloss(line):
+        """Removes the gloss"""
         return line.split(' | ')[0]
     @staticmethod
     def parse(line):
-        gloss = Data.getGloss(line)
-        tokens = Data.removeGloss(removeWhitespaceAtEnd(line)).split(' ')
+        """Parses the line by breaking into tokens and returns a dictionary"""
+        gloss = Data.get_gloss(line)
+        tokens = Data.remove_gloss(remove_whitespace_at_end(line)).split(' ')
         synset_offset = tokens[0]
         lex_filenum = tokens[1]
         ss_type = tokens[2]
@@ -117,13 +116,14 @@ class Data(object):
         pointers = tokens[p_cnt_index+1:p_cnt_index+1+int(p_cnt)*4]
         #For all data.something we should have a pipe | now, but data.verb is an exception,
         #it has more data called frames
-        possiblePipeIndex = int(p_cnt_index)+int(p_cnt)*4+1
-        possiblePipe = tokens[possiblePipeIndex]
+        possible_pipe_index = int(p_cnt_index)+int(p_cnt)*4+1
+        possible_pipe = tokens[possible_pipe_index]
         frames = []
-        if not possiblePipe=='|':
-            frame_counter = int(possiblePipe) #If it's not a pipe, it's a frame_counter
-            frames = tokens[possiblePipeIndex+1:possiblePipeIndex+1+frame_counter*3]
-            frames = [x for x in frames if x != "+"] #removes the preceding '+' symbol in each new frame
+        if not possible_pipe == '|':
+            frame_counter = int(possible_pipe) #If it's not a pipe, it's a frame_counter
+            frames = tokens[possible_pipe_index+1:possible_pipe_index+1+frame_counter*3]
+            #removes the preceding '+' symbol in each new frame
+            frames = [x for x in frames if x != "+"]
             #groups each frame in a list [f_num, w_num]
             frames = [{'f_num': frames[0+n*2], 'w_num': frames[1+n*2]} for n in range(int(len(frames)/2))]
 
@@ -152,10 +152,11 @@ class Data(object):
 class MultilingualIndex(object):
     @staticmethod
     def parse(line):
+        """Parses the line by breaking into tokens and returns a dictionary"""
         tokens = line.split("\t")
-        synsetAndPos = tokens[0].split('-')
-        synset_offset = synsetAndPos[0]
-        pos = synsetAndPos[1]
+        synset_and_pos = tokens[0].split('-')
+        synset_offset = synset_and_pos[0]
+        pos = synset_and_pos[1]
         typ = tokens[1]
         word = tokens[2]
         return {
@@ -173,16 +174,17 @@ class CallbackWrapper(object):
     def execute(self, line):
         self.callback(line, self.kwargs)
 
-        
-def forEachLineOfFileDo(fileName, do):
+
+def for_each_line_of_file_do(file_name, function):
+    """Executes function for each line of the file_name file"""
     c = 0
-    with open(fileName) as fp:
+    with open(file_name) as fp:
         for line in fp:
-            if not isComment(line):
-                line = cleanLine(line)
-                if fileName in indexFiles: do.execute(Index.parse(line))
-                if fileName in dataFiles: do.execute(Data.parse(line))
-                if fileName in multilingualFiles: do.execute(MultilingualIndex.parse(line))
+            if not is_comment(line):
+                line = clean_line(line)
+                if file_name in index_files: function.execute(Index.parse(line))
+                if file_name in data_files: function.execute(Data.parse(line))
+                if file_name in multilingual_files: function.execute(MultilingualIndex.parse(line))
             c += 1
             if c > max:
                 break

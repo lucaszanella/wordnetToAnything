@@ -36,9 +36,9 @@ original_file_name = 'index.verb'
 new_file_name = original_file_name + '.json'
 with open(new_file_name, 'w') as f:
     f.write('[')
-    WN.forEachLineOfFileDo(original_file_name, 
-        WN.CallbackWrapper(to_json, 
-            original_file_name = original_file_name, 
+    WN.for_each_line_of_file_do(original_file_name,
+        WN.CallbackWrapper(to_json,
+            original_file_name = original_file_name,
             file_object = f
         )
     )
