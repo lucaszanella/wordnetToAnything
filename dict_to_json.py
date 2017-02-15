@@ -6,6 +6,12 @@ Lucas Zanella, 13/02/2017
 
 import wordnet_to_dict as WN
 import json
+import os
+
+#User defined area---------
+DIR = "json_files"
+WORDNET_DIR = "dict"
+#--------------------------
 
 '''
 kwargs_from_file_reading are kwargs sent by the iterator that 
@@ -44,9 +50,11 @@ for file_name in list(set(WN.META.index_files) | set(WN.META.data_files)):
     original_file_name = file_name
     new_file_name = original_file_name + '.json'
     print('parsing ' + file_name + ' to ' + new_file_name + '...')
-    with open(new_file_name, 'w') as f:
+    path = DIR + '/' + new_file_name
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as f:
         f.write('[')
-        WN.for_each_line_of_file_do(original_file_name,
+        WN.for_each_line_of_file_do(WORDNET_DIR + '/' + original_file_name,
             WN.CallbackWrapper(to_json,
                 original_file_name = original_file_name,
                 file_object = f

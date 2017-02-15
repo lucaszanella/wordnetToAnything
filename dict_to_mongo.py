@@ -8,8 +8,11 @@ import wordnet_to_dict as WN
 from pymongo import MongoClient
 
 CLIENT = MongoClient()
-DATABASE_NAME = 'wordnet'
 
+#User defined area---------
+WORDNET_DIR = "dict"
+DATABASE_NAME = 'wordnet'
+#--------------------------
 '''
 kwargs_from_file_reading are kwargs sent by the iterator that 
 reads the file line per line, kwargs are from file constructor
@@ -45,7 +48,7 @@ print('working...\n')
 file_name = 'index.verb'
 collection_name = replace_point_with_underline(file_name)
 CLIENT[DATABASE_NAME].drop_collection(collection_name)
-WN.for_each_line_of_file_do(file_name,
+WN.for_each_line_of_file_do(WORDNET_DIR + file_name,
     WN.CallbackWrapper(to_mongo,
         original_file_name = file_name,
         collection_name = collection_name

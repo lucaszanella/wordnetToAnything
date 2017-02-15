@@ -84,7 +84,7 @@ class Data(object):
         ss_type = tokens[2]
         w_cnt = tokens[3]
         #find the list [word1, lex_id1, word2, lex_id2, ...]
-        words = tokens[4:4+2*int(w_cnt)]
+        words = tokens[4:4+2*int(w_cnt)] #words come in pairs [word, lex_id], so we add 2*w_cnt
         #returns tuple [word, lex_id] from the list [word1, lex_id1, word2, lex_id2, ...]
         words = [{'word': words[0+n*2], 'lex_id': words[1+n*2]} for n in range(int(len(words)/2))]
         p_cnt_index = 4+int(w_cnt)*2

@@ -1,5 +1,10 @@
 import urllib.request
 import zipfile
+import os
+
+#User defined area---------
+DIR = "multilingual_wordnets"
+#--------------------------
 
 languages = [
     'als', 'arb', 'bul', 'cmn', 'qcn', 'dan', 'ell',
@@ -13,8 +18,10 @@ baseUrl = 'http://compling.hss.ntu.edu.sg/omw/wns/'
 
 language = 'por'
 fileName = language + '.zip'
+file_path = DIR + "/" + fileName 
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
 print('downloading '+fileName)
-urllib.request.urlretrieve(baseUrl + language + '.zip', fileName)
+urllib.request.urlretrieve(baseUrl + language + '.zip', file_path)
 print('extracting '+fileName)
-with zipfile.ZipFile(fileName,"r") as zip_ref:
-    zip_ref.extractall("")
+with zipfile.ZipFile(file_path,"r") as zip_ref:
+    zip_ref.extractall(DIR)

@@ -15,3 +15,5 @@ por.zip
 wn-data-por.tab
 *.json
 *.pyc
+json_files/
+dict/
