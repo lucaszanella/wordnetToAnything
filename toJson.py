@@ -21,7 +21,10 @@ def toJson(line, args):
         line.pop('p_cnt', None)
         line.pop('sense_cnt', None)
         line.pop('tagsense_cnt', None)
-    fileObject.write(json.dumps(line))
+    comma = ''
+    newLine = '\n'
+    #if not firstLine, change comma
+    fileObject.write(comma + newLine + json.dumps(line))
 
 def justPrint(line, args):
     print(line)
@@ -33,7 +36,9 @@ print('working...\n')
 originalFileName = 'index.verb'
 newFileName = originalFileName + '.json'
 with open(newFileName, 'w') as f:
+    f.write('[')
     WN.forEachLineOfFileDo(originalFileName, WN.CallbackWrapper(toJson, originalFileName, f))
+    f.write(']')
 
 #Takes care of data files
 
