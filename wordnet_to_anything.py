@@ -172,20 +172,25 @@ class CallbackWrapper(object):
     def __init__(self, callback, **kwargs):
         self.callback = callback
         self.kwargs = kwargs
-    def execute(self, line):
-        self.callback(line, self.kwargs)
+    def execute(self, line, **extra):
+        self.callback(line, self.kwargs, extra)
 
 
 def for_each_line_of_file_do(file_name, function):
     """Executes function for each line of the file_name file"""
     c = 0
+    first_line_never_reached = True
     with open(file_name) as fp:
         for line in fp:
             if not is_comment(line):
                 line = clean_line(line)
-                if file_name in index_files: function.execute(Index.parse(line))
-                if file_name in data_files: function.execute(Data.parse(line))
-                if file_name in multilingual_files: function.execute(MultilingualIndex.parse(line))
+                if file_name in index_files:
+                    function.execute(Index.parse(line), is_first_line=first_line_never_reached)
+                if file_name in data_files:
+                    function.execute(Data.parse(line), is_first_line=first_line_never_reached)
+                if file_name in multilingual_files:
+                    function.execute(MultilingualIndex.parse(line), is_first_line=first_line_never_reached)
+                first_line_never_reached = False
             c += 1
             if c > max:
                 break
