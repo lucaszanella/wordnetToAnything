@@ -15,7 +15,7 @@ Just make sure that you have pymongo (optional but you might wanna use it): `pip
 
 `cd wordnetToAnything`
 
-`python3 toMongo.py`
+`python3 dict_to_json.py`
 
 to see what it can do.
 
