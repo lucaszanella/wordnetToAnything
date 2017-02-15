@@ -4,7 +4,7 @@ For each line of parsed WordNet files, send it to MongoDB
 Lucas Zanella, 13/02/2017
 '''
 
-import wordnetToAnything as WN
+import wordnet_to_anything as WN
 from pymongo import MongoClient
 
 CLIENT = MongoClient()
