@@ -1,5 +1,5 @@
 # WordNet To Anything
-This is mainly a python3 script to help you port Wordnet data structures to another language, database, or anything you might be intersted. It reads each line of the wordnet text files and returns a python dictionary containing the tokens; then you can do whatever you want with this dictionary. The `toMongo.py` script, for example, takes each dictionary and inserts as a document in a MongoDB database (of course it separates each text file in its own collection).
+This is mainly a python3 script to help you port Wordnet data structures to another language, database, or anything you might be intersted. It reads each line of the wordnet text files and returns a python dictionary containing the tokens; then you can do whatever you want with this dictionary. The `dict_to_mongo.py` script, for example, takes each dictionary and inserts as a document in a MongoDB database (of course it separates each text file in its own collection).
 
 
 You can insert everything into MongoDB, but since RAM today is big, you can fit the entire WordNet into it, which will lead to 

@@ -4,33 +4,10 @@ Parses the WordNet files and returns a dictionary of tokens for each line
 Lucas Zanella, 13/02/2017
 '''
 import json
+import wordnet_metadata as META
 
 c = 0
 max = 50
-
-index_files = [
-    'index.noun', 'index.verb', 'index.adj', 'index.adv'
-]
-
-data_files = [
-    'data.noun', 'data.verb', 'data.adj', 'data.adv'
-]
-
-exception_files = [
-    'adj.exc', 'adv.exc', 'cousin.exc', 'noun.exc'
-]
-
-verb_files = [
-    'sentidx.vrb', 'sents.vrb'
-]
-
-other_files = [
-    'cntlist', 'verb.Framestext', 'cntlist.rev'
-]
-
-multilingual_files = [
-    'wn-data-por.tab'
-]
 
 #Strips the new line character
 def clean_line(line):
@@ -96,7 +73,7 @@ class Data(object):
     @staticmethod 
     def remove_gloss(line):
         """Removes the gloss"""
-        return line.split(' | ')[0]
+        return line.split(' | ')[0] + ' |' #Puts the pipe back in
     @staticmethod
     def parse(line):
         """Parses the line by breaking into tokens and returns a dictionary"""
@@ -118,7 +95,12 @@ class Data(object):
         #For all data.something we should have a pipe | now, but data.verb is an exception,
         #it has more data called frames
         possible_pipe_index = int(p_cnt_index)+int(p_cnt)*4+1
-        possible_pipe = tokens[possible_pipe_index]
+        try:
+            possible_pipe = tokens[possible_pipe_index]
+        except Exception:
+            print(line)
+            print(tokens)
+            print(possible_pipe_index)
         frames = []
         if not possible_pipe == '|':
             frame_counter = int(possible_pipe) #If it's not a pipe, it's a frame_counter
@@ -184,11 +166,11 @@ def for_each_line_of_file_do(file_name, function):
         for line in fp:
             if not is_comment(line):
                 line = clean_line(line)
-                if file_name in index_files:
+                if file_name in META.index_files:
                     function.execute(Index.parse(line), is_first_line=first_line_never_reached)
-                if file_name in data_files:
+                if file_name in META.data_files:
                     function.execute(Data.parse(line), is_first_line=first_line_never_reached)
-                if file_name in multilingual_files:
+                if file_name in META.multilingual_files:
                     function.execute(MultilingualIndex.parse(line), is_first_line=first_line_never_reached)
                 first_line_never_reached = False
             c += 1

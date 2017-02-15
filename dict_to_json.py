@@ -40,18 +40,19 @@ def to_json(line, kwargs, kwargs_from_file_reading):
 print('working...\n')
 #Takes care of index and data files
 
-#erases collection in case you have written something there before
-original_file_name = 'index.verb'
-new_file_name = original_file_name + '.json'
-with open(new_file_name, 'w') as f:
-    f.write('[')
-    WN.for_each_line_of_file_do(original_file_name,
-        WN.CallbackWrapper(to_json,
-            original_file_name = original_file_name,
-            file_object = f
+for file_name in list(set(WN.META.index_files) | set(WN.META.data_files)):
+    original_file_name = file_name
+    new_file_name = original_file_name + '.json'
+    print('parsing ' + file_name + ' to ' + new_file_name + '...')
+    with open(new_file_name, 'w') as f:
+        f.write('[')
+        WN.for_each_line_of_file_do(original_file_name,
+            WN.CallbackWrapper(to_json,
+                original_file_name = original_file_name,
+                file_object = f
+            )
         )
-    )
-    f.write(']')
+        f.write(']')
 
 #Takes care of data files
 
