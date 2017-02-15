@@ -30,7 +30,7 @@ def justPrint(line, args):
     print(line)
 
 print('working...\n')
-#Takes care of index files
+#Takes care of index and data files
 
 #erases collection in case you have written something there before
 originalFileName = 'index.verb'
