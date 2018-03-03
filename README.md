@@ -7,15 +7,17 @@ faster searching (you'll, though, have to implement your own searching algorithm
 this parser to other languages in order to have the WordNet accessible through RAM into your prefered one, you just have to save the WordNet
 in json files and parse them with your language's json parser (maybe I'll create a .json version of WordNet and link it here).
 
-#How to use it
+# How to use it
 
 Just make sure that you have pymongo (optional but you might wanna use it): `pip3 install pymongo`
 
-`git clone https://github.com/lucaszanella/wordnetToAnything`
+```
+git clone https://github.com/lucaszanella/wordnetToAnything
 
-`cd wordnetToAnything`
+cd wordnetToAnything
 
-`python3 dict_to_json.py`
+python3 dict_to_json.py
+```
 
 to see what it can do.
 
