@@ -27,27 +27,7 @@ understand how the WordNet works just by looking into the official documentation
 
 [This][4] is where you can download the WordNet. However, it comes with programs to read the data. We just want the data, as we're gonna building programs on top of it, or just intersted in converting it to another language. So you should download from the part that says "WordNet 3.1 DATABASE FILES ONLY". You'll get the following files:
 
-├── adj.exc
-├── adv.exc
-├── cntlist
-├── cntlist.rev
-├── cousin.exc
-├── data.adj
-├── data.adv
-├── data.noun
-├── data.verb
-├── dbfiles
-├── index.adj
-├── index.adv
-├── index.noun
-├── index.sense
-├── index.verb
-├── log.grind.3.1
-├── noun.exc
-├── sentidx.vrb
-├── sents.vrb
-├── verb.exc
-└── verb.Framestext
+`adj.exc, adv.exc, cntlist, cntlist.rev, cousin.exc, data.adj, data.adv, data.noun, data.verb, dbfiles, index.adj, index.adv, index.noun, index.sense, index.verb, log.grind.3.1, noun.exc, sentidx.vrb, sents.vrb, verb.exc, verb.Framestext`
 
 The ones that really matter are `index.something` and `data.something`, where this `something` can be `adv`, `noun`, `verbe`, `adj`
 
